@@ -26,6 +26,22 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+## Docker
+
+```bash
+$ docker compose up -d
+```
+
+## Prisma
+
+```bash
+# Inicia o prisma
+$ npx prisma init
+
+# Gera as migration
+$ npx prisma migrate dev
+```
+
 <!-- ## Run tests
 
 ```bash
