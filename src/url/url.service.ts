@@ -79,6 +79,8 @@ export class UrlService {
 
   async getUrl(hash: string) {
     try {
+      const dateNow = new Date();
+
       const url = await this.prisma.url.findFirst({
         where: { shortedUrl: hash },
         select: {
@@ -97,8 +99,16 @@ export class UrlService {
         throw new HttpException('Url não encontrado', HttpStatus.NOT_FOUND);
       }
 
+      if (url.expireAt < dateNow) {
+        throw new HttpException('Url expirada', HttpStatus.NOT_FOUND);
+      }
+
       return url;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       console.error(error);
       throw new HttpException(
         'Falha ao buscar a url',
