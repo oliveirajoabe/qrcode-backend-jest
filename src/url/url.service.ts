@@ -84,6 +84,7 @@ export class UrlService {
       const url = await this.prisma.url.findFirst({
         where: { shortedUrl: hash },
         select: {
+          id: true,
           title: true,
           url: true,
           clicks: true,
@@ -103,7 +104,23 @@ export class UrlService {
         throw new HttpException('Url expirada', HttpStatus.NOT_FOUND);
       }
 
-      return url;
+      await this.prisma.url.update({
+        where: { id: url.id },
+        data: {
+          clicks: url.clicks! + 1,
+        },
+      });
+
+      return {
+        title: url.title,
+        url: url.url,
+        clicks: url.clicks,
+        createdAt: url.createdAt,
+        shortedUrl: url.shortedUrl,
+        userId: url.userId,
+        description: url.description,
+        expireAt: url.expireAt,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
